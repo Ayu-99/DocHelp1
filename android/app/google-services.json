@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1094847228183",
+    "firebase_url": "https://dochelp-c9046.firebaseio.com",
+    "project_id": "dochelp-c9046",
+    "storage_bucket": "dochelp-c9046.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1094847228183:android:5fe91bc47abdd605ebef52",
+        "android_client_info": {
+          "package_name": "com.ayushisharma5141.shitf"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1094847228183-ul93fjudemmc97u7eqlm82bd2hl59oij.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ayushisharma5141.shitf",
+            "certificate_hash": "e0483bbf71abb35e517a158f26ec3216e991c1c6"
+          }
+        },
+        {
+          "client_id": "1094847228183-kq76ch3ih9j1c5juchbl8n71sbrh8ejt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBL_fkIVj_fHvJoKmP8Yg-r2TKnd69kuRA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1094847228183-kq76ch3ih9j1c5juchbl8n71sbrh8ejt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
