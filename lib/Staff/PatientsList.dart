@@ -9,8 +9,7 @@ import 'staffDetails.dart';
 import 'package:shitf/searchService.dart';
 
 StaffDetailsClass s=new StaffDetailsClass();
-//String staffName=s.getStaffName();
-//String staffPhone=s.getStaffPhone();
+
 
 DocumentReference documentReference;
 DateTime _dateTime;
@@ -23,8 +22,7 @@ String patientName="Patient";
 String patientProblem="Patient Problem";
 String patientPhone="hhhh";
 String selectedDoc;
-String staffEmail="example.com";
-String staffName="Jennie";
+
 
 String pname;
 String pprob;
@@ -32,7 +30,9 @@ String pphone;
 String pgender;
 String problem="";
 String currentProblem="";
-
+String staffName=s.getStaffName();
+String staffEmail=s.getStaffEmail();
+String specialPhone;
 crudMethods c=new crudMethods();
 
 String selectGender(){
@@ -48,6 +48,10 @@ String selectGender(){
 String getProblem(){
 
   return problem;;
+}
+
+String getPhone(){
+  return specialPhone;
 }
 
 
@@ -99,82 +103,6 @@ class _PatientsListState extends State<PatientsList> {
     c.deleteData(selectedDoc);
   }
 
-
-
-//  Future<bool> specifiProblemDialog2(BuildContext context){
-//
-////  int selectedValue=0;
-//    return showDialog(
-//        context: context,
-//        builder: (BuildContext context){
-//          return AlertDialog(
-//            shape: RoundedRectangleBorder(
-//                borderRadius:
-//                BorderRadius.all(Radius.circular(10.0))),
-//
-//            title: Text("Choose any option->"),
-//            content:Container(
-//              padding: EdgeInsets.all(5.0),
-//              height: 150.0,
-//              child: Column(
-//
-//
-//
-//                children: <Widget>[
-//
-//
-//                  Text(
-//                    "Do u want to display list for...",
-//                    style: TextStyle(
-//                      fontWeight: FontWeight.bold,
-//                      fontSize: 25.0,
-//
-//                    ),
-//                  ),
-//
-//
-//                ],
-//              ),
-//
-//            ),
-//            actions: <Widget>[
-//              SizedBox(height: 20.0,),
-//              FlatButton(
-//                child: Text("All Patients"),
-//                color: Colors.cyan[200],
-//                textColor: Colors.white,
-//                onPressed: (){
-////                      print(selectedValue);
-//                  Navigator.of(context).pop();
-//                  Navigator.of(context).pushNamed("/ProblemSpecificAllPatientsList");
-//
-//
-//                },
-//
-//
-//              ),
-//              FlatButton(
-//                child: Text("Waiting Patients"),
-//                color: Colors.cyan[200],
-//                textColor: Colors.white,
-//                onPressed: (){
-////                      print(selectedValue);
-//                  Navigator.of(context).pop();
-//                  Navigator.of(context).pushNamed("/ProblemSpecificPatientsList");
-//
-//
-//                },
-//
-//
-//              ),
-//            ],
-//          );
-//        }
-//    );
-//
-//  }
-
-
   Future<bool> specifiProblemDialog(BuildContext context){
 
 //  int selectedValue=0;
@@ -211,7 +139,9 @@ class _PatientsListState extends State<PatientsList> {
                     ),
                     onChanged: (val){
                       final problem=val;
+                      print("!!!!!!!!!!111");
                       print("Problem is: "+problem);
+                      print("!!!!!!!!!!111");
                     },
                   ),
                   SizedBox(height:20.0),
@@ -369,6 +299,7 @@ class _PatientsListState extends State<PatientsList> {
                           pprob = snapshot.data.documents[i].data['problem'];
                           pgender = snapshot.data.documents[i].data['gender'];
                           selectedDoc = snapshot.data.documents[i].documentID;
+                          specialPhone=pphone;
                           options(context);
 
                         },
@@ -468,11 +399,17 @@ class _PatientsListState extends State<PatientsList> {
       'problem':patientProblem,
       'gender':selectGender(),
       'phone':patientPhone,
-      'Time Arrived':_dateTime.toString(),
-      'Time Departed':"",
+//      'Time Arrived':_dateTime.toString(),
+      'Time Departed':_dateTime.toString(),
 
     };
+    print("((((((((((((((((((((((");
+    c.getDocumentId();
+    print("((((((((((((((((((((((");
 
+    print("*****************************");
+    print(docRef.toString());
+    print("*****************************");
     await c.updatePatientInAllPatients(docRef.toString(), Patient);
     deletePatient();
 
@@ -680,10 +617,11 @@ class _PatientsListState extends State<PatientsList> {
                     'gender':selectGender(),
                     'phone':patientPhone,
                     'Time Arrived':DateTime.now().toString(),
-                    'Time Departed':"",
+                    'searchKey':patientName[0].toUpperCase(),
+
 
                   };
-                  c. AddAllPatientsTillDate(Patient);
+                  c.AddAllPatientsTillDate(Patient);
 //                  final docRef = Firestore.instance.collection('All Patients').add({
 //                    'name':patientName,
 //                    'problem':patientProblem,
@@ -701,11 +639,14 @@ class _PatientsListState extends State<PatientsList> {
                     'Date Time Arrived':DateTime.now().toString(),
                     'Time':TimeOfDay.now().toString(),
                     'searchKey':patientName[0].toUpperCase(),
+
                   };
                   c.waitingPatients(waitingPatient).then((result){
                     dialogTrigger(context);
                   }).catchError((e){
+                    print("&&&&&&&&&&&&&&&&");
                     print("Error in dialog"+e);
+                    print("&&&&&&&&&&&&&&&&");
                   });
 
 
@@ -822,12 +763,14 @@ class _PatientsListState extends State<PatientsList> {
                     'name':patientName,
                     'problem':patientProblem,
                     'gender':selectGender(),
-                    'phone':patientPhone,
+                    'phone': patientPhone,
                   };
                   c.updateData(selectedDoc,waitingPatient).then((result){
                     dialogTrigger(context);
                   }).catchError((e){
+                    print("AAAAAAAAAAAAAAAAAAAa");
                     print("Error in dialog"+e);
+                    print("AAAAAAAAAAAAAAAAAAAa");
                   });
 
                 },

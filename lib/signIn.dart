@@ -7,28 +7,27 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:shitf/User.dart';
+import 'package:shitf/services/authentication.dart';
+import 'services/authentication.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'mapping.dart';
 
-// void main(){
-//   runApp(MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner:false ,
-//       home: MyHomePage(),
-
-//     );
-//   }
-// }
-
+AuthImplementation  auth;
 class MyHomePage extends StatefulWidget {
+ MyHomePage({
+   this.auth,
+   this.onSignedIn,
+ });
+  AuthImplementation auth;
+  final VoidCallback onSignedIn;
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final formKey = GlobalKey<FormState>();
+
+  String _error;
   String email;
   String password;
   String phoneNo;
@@ -59,13 +58,50 @@ class _MyHomePageState extends State<MyHomePage> {
     try{
       AuthResult result= await _auth.signInWithEmailAndPassword(email: email, password: password);
       FirebaseUser user=result.user;
+      print("User is:$user");
 
       return _userFromFirebase(user);
 
     }catch(e){
+      setState(() {
+        _error=e.message;
+      });
       print(e.toString());
       return null;
     }
+  }
+  Widget showAlert(){
+    if(_error!=null){
+      return Container(
+        color: _error==""?Colors.white24:Colors.amberAccent,
+        width: double.infinity,
+        padding: EdgeInsets.all(8.0),
+        child: Row(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right:8.0),
+              child: Icon(Icons.error_outline),
+            ),
+            Expanded(
+              child: AutoSizeText(_error, maxLines:3,),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left:8.0),
+              child: IconButton(
+                icon: Icon(Icons.close),
+                onPressed: (){
+                  setState(() {
+                    _error=null;
+
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return SizedBox(height:8.0);
   }
 
 
@@ -80,6 +116,17 @@ class _MyHomePageState extends State<MyHomePage> {
     FirebaseUser user = authResult.user;
     print("signed in " + user.displayName);
     return user;
+  }
+
+  bool validate(){
+    final form=formKey.currentState;
+    form.save();
+    if(form.validate()){
+      form.save();
+      return true;
+    }else{
+      return false;
+    }
   }
 
 
@@ -97,6 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Container(
             child:Stack(
               children: <Widget>[
+
                 Container(
                   padding: EdgeInsets.fromLTRB(15.0, 50.0, 0.0, 0.0),
                   child:Text(
@@ -135,50 +183,72 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: EdgeInsets.only(top: 250.0, left:20.0, right:20.0),
                   child: Column(
                     children: <Widget>[
-                      TextFormField(
-                        validator: (val)=>val.isEmpty?'Enter a valid email':null,
-                        onChanged: (val)=>email=val,
-                        decoration: InputDecoration(
-                          labelText: 'EMAIL',
-                          labelStyle: TextStyle(
-                            color:Colors.grey,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          focusedBorder:UnderlineInputBorder(
-                            borderSide:BorderSide(color:Colors.blue[300]),
-                          ),
+                      Padding(
+                        padding: EdgeInsets.all(2.0),
+                        child: Form(
+                          key: formKey,
+                          child:Column(
+                            children: <Widget>[
+                              TextFormField(
+                                validator:EmailValidator.validate,
+                                onChanged: (val)=>email=val,
+                                decoration: InputDecoration(
+                                  icon: Icon(Icons.email),
+                                  labelText: 'EMAIL',
+                                  labelStyle: TextStyle(
+
+                                    color:Colors.grey,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  focusedBorder:UnderlineInputBorder(
+                                    borderSide:BorderSide(color:Colors.blue[300]),
+                                  ),
+                                ),
+                              ),
+
+                              SizedBox(height: 20.0),
+                              TextFormField(
+                                obscureText: true,
+                                validator:PasswordValidator.validate,
+                                onChanged: (val)=>password=val,
+                                decoration: InputDecoration(
+                                  icon: Icon(Icons.lock),
+
+                                  labelText: 'PASSWORD',
+                                  labelStyle: TextStyle(
+                                    color:Colors.grey,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  focusedBorder:UnderlineInputBorder(
+                                    borderSide:BorderSide(color:Colors.blue[300]),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+
                         ),
                       ),
 
-                      SizedBox(height: 20.0),
-                      TextFormField(
-                        obscureText: true,
-                        validator: (val)=>val.length>6?'Enter a password of length > 6 characters':null,
-                        onChanged: (val)=>password=val,
-                        decoration: InputDecoration(
-
-                          labelText: 'PASSWORD',
-                          labelStyle: TextStyle(
-                            color:Colors.grey,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          focusedBorder:UnderlineInputBorder(
-                            borderSide:BorderSide(color:Colors.blue[300]),
-                          ),
-                        ),
-                      ),
                       SizedBox(height: 5.0),
                       Container(
                         alignment: Alignment(1.0, 0.0),
                         padding: EdgeInsets.only(top:15.0, left:20.0),
                         child:InkWell(
-                          child: Text('Forgot Password?',
-                            style:TextStyle(
-                              color:Colors.blue[300],
-                              fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.underline,
+                          child:FlatButton(
+                            child:  Text('Forgot Password?',
+                              style:TextStyle(
+                                color:Colors.blue[300],
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                              ),
                             ),
+                            onPressed:() {
+                              Navigator.of(context).pushNamed("/ResetPassword");
+                            },
+
                           ),
+
                         ),
                       ),
                       SizedBox(height: 40.0,),
@@ -199,24 +269,25 @@ class _MyHomePageState extends State<MyHomePage> {
                             onPressed:(){
                               // if(_formKey.currentState.validate()){
                               dynamic result=signInWithEmailAndPassword(email, password);
-                              if(result==null){
-                                setState(() {
-                                  print("No user");
-//                                  // Fluttertoast.showToast(
-                                  //     msg: "Username or Password Incorrect",
-                                  //     toastLength: Toast.LENGTH_SHORT,
-                                  //     gravity: ToastGravity.CENTER,
-                                  //     // timeInSecForIos: 1,
-                                  //     backgroundColor: Colors.red,
-                                  //     textColor: Colors.white,
-                                  //     fontSize: 16.0
-                                  // );
-                                });
+                              if(validate()){
+                                if(_error!=null){
+                                  if(result==null){
+                                    setState(() {
+                                        print("There is error");
 
-                              }else{
-                                print("User Logged in!!");
-                                Navigator.of(context).pushNamed("/HomePage");
+                                    });
+
+                                  }else{
+                                    Navigator.of(context).pushNamed("/HomePage");
+
+                                    print("User Logged in!!");
+                                    widget.onSignedIn;
+//                                widget.onSignedIn();
+                                  }
+                                }
                               }
+
+
 
                             },
                             child:Center(
@@ -352,6 +423,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           ),
+          showAlert(),
 
         ],),
     );

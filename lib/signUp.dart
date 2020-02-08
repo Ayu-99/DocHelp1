@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:fluttertoast/fluttertoast.dart';
-// import 'package:attempt/signUp.dart';
+import 'package:font_awesome_flutter/icon_data.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shitf/User.dart';
-//import 'DoctorDetails.dart';
+import 'package:shitf/services/authentication.dart';
+import 'mapping.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
-// void main(){
-//   runApp(MyApp());
-// }
 
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner:false ,
-//       home: MyHomePage(),
+AuthImplementation auth;
 
-//     );
-//   }
-// }
 
 class Register extends StatefulWidget {
 
+  Register({
+    this.auth,
+    this.onSignedIn,
+});
+
+
+  AuthImplementation auth;
+  final VoidCallback onSignedIn;
   @override
   _RegisterState createState() => _RegisterState();
 }
 
 class _RegisterState extends State<Register> {
+  String _error;
+  final formKey = GlobalKey<FormState>();
   String email;
   String password;
   String uid;
@@ -35,14 +35,31 @@ class _RegisterState extends State<Register> {
 
 
 
+  final GoogleSignIn googleSignIn = new GoogleSignIn();
+
   User _userFromFirebase(FirebaseUser user){
     return user!=null?User(uid:user.uid):null;
   }
 
 
-  Future registerWithEmailAndPassword(String email, String password) async{
-    try{
 
+
+  Future<FirebaseUser> _handleSignIn() async {
+    GoogleSignInAccount googleUser = await googleSignIn.signIn();
+    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    final AuthResult authResult = await _auth.signInWithCredential(credential);
+    FirebaseUser user = authResult.user;
+    print("signed in " + user.displayName);
+    return user;
+  }
+
+  Future registerWithEmailAndPassword(String email, String password) async{
+
+    try{
       AuthResult result=await _auth.createUserWithEmailAndPassword(email: email, password: password);
       FirebaseUser user=result.user;
 //      await DatabaseService(uid:user.uid).updateUserData(email, password);
@@ -51,6 +68,10 @@ class _RegisterState extends State<Register> {
       return _userFromFirebase(user);
 
     }catch(e){
+      print(e);
+      setState(() {
+        _error=e.message;
+      });
       print(e.toString());
       return null;
     }
@@ -73,28 +94,109 @@ class _RegisterState extends State<Register> {
     }
   }
 
-  // Future registerWithFacebook(){
-  //   try{
 
 
-  //   }catch(e){
-  //     print(e.toString());
-  //     return null;
-  //   }
-  // }
+  void SnackBarPage(){
+    final snackBar = SnackBar(
+        content: Text('Yay! A SnackBar!'),
+    action: SnackBarAction(
+    label: 'Undo',
+    onPressed: () {
+    // Some code to undo the change.
+    },
+    )
+    );
+  }
+
+
+  void _changeFormToLogin(){
+
+    print("User registered!!!");
+    Navigator.of(context).pop();
+    Navigator.of(context).pushNamed("/Login");
+  }
 
 
 
+  void _showVerifyEmailSentDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: Text("Verify your account"),
+          content: Text("Link to verify account has been sent to your email"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Dismiss"),
+              onPressed: () {
+                _changeFormToLogin();
 
 
+//                Navigator.of(context).pushNamed("/Login");
 
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  bool validate(){
+    final form=formKey.currentState;
+    form.save();
+    if(form.validate()){
+      form.save();
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+
+  Widget showAlert(){
+    if(_error!=null){
+      return Container(
+        color: _error==""?Colors.white24:Colors.amberAccent,
+        width: double.infinity,
+        padding: EdgeInsets.all(8.0),
+        child: Row(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right:8.0),
+              child: Icon(Icons.error_outline),
+            ),
+            Expanded(
+              child: AutoSizeText(_error, maxLines:3,),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left:8.0),
+              child: IconButton(
+                icon: Icon(Icons.close),
+                onPressed: (){
+                  setState(() {
+                    _error=null;
+
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return SizedBox(height:8.0);
+  }
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+
 
           Container(
             child:Stack(
@@ -135,12 +237,15 @@ class _RegisterState extends State<Register> {
 
                 Container(
                   padding: EdgeInsets.only(top: 250.0, left:20.0, right:20.0),
+                  child: Form(
+                    key: formKey,
                   child: Column(
                     children: <Widget>[
                       TextFormField(
-                        validator: (val)=>val.isEmpty?'Enter a valid email':null,
+                        validator: EmailValidator.validate,
                         onChanged: (val)=>email=val,
                         decoration: InputDecoration(
+                          icon: Icon(Icons.email),
                           labelText: 'EMAIL',
                           labelStyle: TextStyle(
                             color:Colors.grey,
@@ -155,10 +260,11 @@ class _RegisterState extends State<Register> {
                       SizedBox(height: 20.0),
                       TextFormField(
                         obscureText: true,
-                        validator: (val)=>val.length>6?'Enter a password of length > 6 characters':null,
+                        validator: PasswordValidator.validate,
                         onChanged: (val)=>password=val,
                         decoration: InputDecoration(
 
+                          icon: Icon(Icons.lock),
                           labelText: 'PASSWORD',
                           labelStyle: TextStyle(
                             color:Colors.grey,
@@ -170,19 +276,7 @@ class _RegisterState extends State<Register> {
                         ),
                       ),
                       SizedBox(height: 5.0),
-                      Container(
-                        alignment: Alignment(1.0, 0.0),
-                        padding: EdgeInsets.only(top:15.0, left:20.0),
-                        child:InkWell(
-                          child: Text('Forgot Password?',
-                            style:TextStyle(
-                              color:Colors.blue[300],
-                              fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ),
-                      ),
+
                       SizedBox(height: 40.0,),
                       Container(
                         height: 40.0,
@@ -200,25 +294,37 @@ class _RegisterState extends State<Register> {
                             color: Colors.blueAccent,
                             onPressed:(){
                               // if(_formKey.currentState.validate()){
-                              dynamic result=registerWithEmailAndPassword(email, password);
-                              if(result==null){
-                                setState(() {
-                                  print("No user");
-                                  // Fluttertoast.showToast(
-                                  //     msg: "Username or Password Incorrect",
-                                  //     toastLength: Toast.LENGTH_SHORT,
-                                  //     gravity: ToastGravity.CENTER,
-                                  //     // timeInSecForIos: 1,
-                                  //     backgroundColor: Colors.red,
-                                  //     textColor: Colors.white,
-                                  //     fontSize: 16.0
-                                  // );
-                                });
+                              if(validate()){
+                                dynamic result=registerWithEmailAndPassword(email, password);
+                                if(_error==null){
+                                  if(result==null){
+                                    final snackBar = SnackBar(
+                                        content: Text('Cannot Register!'),
+                                        action: SnackBarAction(
+                                          label: 'Dismiss',
+                                          onPressed: () {
+                                            // Some code to undo the change.
+                                            Navigator.of(context).pop();
+                                          },
+                                        )
+                                    );
+                                    setState(() {
+                                      snackBar;
+                                      Scaffold.of(context).showSnackBar(snackBar);
+                                    });
 
-                              }else{
-                                print("User registered!!!");
-                                Navigator.of(context).pushNamed("/Login");
-                              }
+                                  }else{
+//                                    widget.auth.sendEmailVerification();
+//                                    _showVerifyEmailSentDialog();
+                                    Navigator.of(context).pushNamed("/Login");
+
+
+
+                                  }
+                                }
+                                }
+
+
 
                             },
                             child:Center(
@@ -252,15 +358,23 @@ class _RegisterState extends State<Register> {
                           child:Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Center(
-                                child: ImageIcon(AssetImage('assets/facebook.png'),),
-                              ),
+                              // Center(
+                              //   child: IconButton(
+                              //     icon:
+                              //   ),
+                              // ),
                               SizedBox(width: 1.0,),
                               Center(
-                                child:Text('Register with Facebook',
-                                    style:TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    )),
+                                child:FlatButton(
+                                    onPressed: (){
+                                      _handleSignIn()
+                                          .then((FirebaseUser user) => print(user))
+                                          .catchError((e) => print(e));
+                                    },
+                                    child:Text('Register with Google',
+                                        style:TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ))),
                               ),
                             ],
                           ),
@@ -295,8 +409,9 @@ class _RegisterState extends State<Register> {
                               SizedBox(width: 0.05,),
                               Center(
                                 child:IconButton(
-                                  onPressed: (){},
-                                  icon:Icon(FontAwesomeIcons.phone),
+                                  onPressed: (){
+                                    Navigator.of(context).pushNamed("/LoginPhone");                                  },
+                                  icon:Icon(Icons.phone),
                                 ),
                               ),
 
@@ -310,6 +425,7 @@ class _RegisterState extends State<Register> {
                     ],
                   ),
                 ),
+                )
               ],
             ),
           ),
@@ -326,7 +442,7 @@ class _RegisterState extends State<Register> {
               SizedBox(width: 5.0,),
               InkWell(
                 onTap: (){
-                  Navigator.of(context).pushNamed("/HomePage");
+                  Navigator.of(context).pushNamed("/Login");
                 },
                 child:Text(
                   'Login',
@@ -340,7 +456,9 @@ class _RegisterState extends State<Register> {
             ],
           ),
 
-        ],),
+          showAlert(),
+      ],
+      ),
     );
   }
 }

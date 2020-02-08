@@ -10,6 +10,7 @@ String staffName;
 String staffPhone;
 String staffAddress;
 String staffUdoctor;
+String staffEmail;
 
 
 class StaffDetailsClass{
@@ -24,6 +25,9 @@ class StaffDetailsClass{
   }
   String getStaffAddress(){
     return staffAddress;
+  }
+  String getStaffEmail(){
+    return staffEmail;
   }
 
 }
@@ -91,7 +95,7 @@ class _StaffDetailsState extends State<StaffDetails> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20.0,),
+                SizedBox(height: 10.0,),
                 TextFormField(
                   validator: (val)=>val.length<10?'Enter a valid phone Number':null,
                   onChanged: (val)=>staffPhone=val,
@@ -107,7 +111,7 @@ class _StaffDetailsState extends State<StaffDetails> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20.0,),
+                SizedBox(height: 10.0,),
 
                 TextFormField(
                   validator: (val)=>val.isEmpty?'Enter your address':null,
@@ -124,7 +128,23 @@ class _StaffDetailsState extends State<StaffDetails> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20.0,),
+                SizedBox(height: 10.0,),
+                TextFormField(
+                  validator: (val)=>val.isEmpty?'Enter your email':null,
+                  onChanged: (val)=>staffEmail=val,
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.home),
+                    labelText: 'EMAIL',
+                    labelStyle: TextStyle(
+                      color:Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    focusedBorder:UnderlineInputBorder(
+                      borderSide:BorderSide(color:Colors.blue[300]),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10.0,),
                 TextFormField(
 
                   validator: (val)=>val.isEmpty?'Enter the name of doctor under which u work':null,
@@ -141,7 +161,7 @@ class _StaffDetailsState extends State<StaffDetails> {
                     ),
                   ),
                 ),
-                SizedBox(height: 50.0,),
+                SizedBox(height: 30.0,),
                 Container(
                   width: 100.0,
                   height: 40.0,

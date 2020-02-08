@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shitf/crud.dart';
 import 'package:shitf/crud.dart' as prefix0;
-import 'package:shitf/doctorDashboard.dart';
+import 'package:shitf/Doctor/doctorDashboard.dart';
 
 
 crudMethods c=new crudMethods();

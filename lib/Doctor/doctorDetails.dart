@@ -1,11 +1,14 @@
 // import 'package:attempt/User.dart';
  import 'package:flutter/material.dart';
  import 'package:cloud_firestore/cloud_firestore.dart';
- import 'signUp.dart';
- import 'crud.dart';
+import 'package:shitf/Doctor/doctor.dart';
+ import '../signUp.dart';
+ import '../crud.dart';
+ import 'doctorSignIn.dart';
+DocumentReference _documentReference;
+doctorDetails1 d;
 
-
- class DoctorDetails extends StatefulWidget {
+class DoctorDetails extends StatefulWidget {
    @override
    _DoctorDetailsState createState() => _DoctorDetailsState();
  }
@@ -16,7 +19,7 @@
 
    crudMethods c=new crudMethods();
 
-
+Map<String, String> doct;
 
    @override
    Widget build(BuildContext context) {
@@ -54,24 +57,7 @@
 
                  SizedBox(height: 20.0,),
 
-                 TextFormField(
-                         validator: (val)=>val.isEmpty?'Enter a valid name':null,
-                         onChanged: (val)=>name=val,
-                         decoration: InputDecoration(
-                           icon: Icon(Icons.person),
-                           // contentPadding: EdgeInsets.fromLTRB(50.0, 10.0, 20.0, 10.0),
-                           labelText: 'NAME',
-                           labelStyle: TextStyle(
-                             color:Colors.grey,
-                             fontWeight: FontWeight.bold,
-                           ),
-                           focusedBorder:UnderlineInputBorder(
 
-                             borderSide:BorderSide(color:Colors.blue[300]),
-                           ),
-                         ),
-                       ),
-                       SizedBox(height: 20.0,),
              TextFormField(
                          validator: (val)=>val.length<10?'Enter a valid phone Number':null,
                          onChanged: (val)=>phone=val,
@@ -138,13 +124,40 @@
                                     side: BorderSide(color: Colors.blue)),
                              color: Colors.blueAccent,
                              onPressed:() {
-                                Navigator.of(context).pop();
-                                Map<String, String> doctorDetails={'name':name, 'phone':phone, 'address':address, 'specialization':spec};
-                                c.addData(doctorDetails).then((result){
-                                  navigate();
-                                }).catchError((e){
-                                  print(e);
-                                });
+//                                Navigator.of(context).pop();
+                                _documentReference = Firestore.instance.collection("Online Consulting patients").document(uidOfDoctor);
+                                doct={
+                                  'name':nameDoctor,
+                                  'phoneNumber':phone,
+                                  'photoUrl':photoUrlDoctor,
+                                  'address':address,
+                                  'specialization':spec,
+                                  'uid':uidOfDoctor
+                                };
+                                c.updateDoctor(uidOfDoctor, doct);
+                                print("Updated");
+                                Navigator.of(context).pushNamed("/AllOnlineConsultationPatients");
+
+
+
+//                                    d.name=userDoctor.displayName;
+//                                    d.emailId=userDoctor.email;
+//                                    d.photoUrl=userDoctor.photoUrl;
+//                                    d.uid=userDoctor.uid;
+//                                    d.phoneNumber=phone;
+//                                    d.specialization=spec;
+//                                    d.address=address;
+
+//                                    doct=d.toSecondMap(d);
+//                                    print("Second Map data is: $doct");
+//                                    _documentReference.setData(doct).whenComplete(() {
+//                                      print("Users Collection added to Database");
+//
+//                                    }).catchError((e) {
+//                                      print("Error adHomding collection to Database $e");
+//                                    });
+
+
 //                               print("User in firestore");
                                // uid=User.uid;
                                  // if(_formKey.currentState.validate()){

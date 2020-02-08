@@ -1,15 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:shitf/PatientDetails.dart';
+import 'package:shitf/Patient/PatientDetails.dart';
 
 import 'package:shitf/Staff/PatientsList.dart';
-import 'package:shitf/doctorDashboard.dart' as prefix0;
+import 'package:shitf/Doctor/doctorDashboard.dart' as prefix0;
 
 //PatientsList p=new PatientsList();
 String problem=getProblem();
+String phone=getPhone();
 DocumentReference docRef;
+String id;
 class crudMethods{
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   bool isLoggedIn(){
     if(FirebaseAuth.instance.currentUser()!=null){
@@ -33,6 +36,9 @@ class crudMethods{
 
 
 
+   sendPasswordResetLink(String email) async{
+    return _auth.sendPasswordResetEmail(email: email);
+  }
   Future<void> addData(doctorDetails) {
 //    if(isLoggedIn()){
     Firestore.instance.collection("Doctors").add(doctorDetails).catchError((e) {
@@ -120,10 +126,17 @@ class crudMethods{
     });
   }
 
+  updateDoctor(selectedDoc, newValues){
+    Firestore.instance.collection("Doctors").document(selectedDoc).updateData(newValues).catchError((e){
+      print(e);
+    });
+  }
+
 
 
 
   deleteData(docId){
+    print(docId);
     Firestore.instance.collection('Waiting Patients').document(docId)
         .delete().catchError((e){
           print(e);
@@ -133,5 +146,15 @@ class crudMethods{
   getPatientsWithSpecificProblem()async{
     return  Firestore.instance.collection("Waiting Patients").where('problem', isEqualTo: problem).snapshots();
   }
+
+  getDocumentId()async{
+    print("--------------");
+    print(Firestore.instance.collection("All Patients").where('phone', isEqualTo: phone).snapshots().forEach((response){
+
+    }));
+    print("--------------");
+  }
+
+
 
 }

@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'signUp.dart';
-import 'crud.dart';
+import '../crud.dart';
 
 
 class PatientDetails extends StatefulWidget {
