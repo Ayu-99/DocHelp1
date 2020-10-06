@@ -35,6 +35,13 @@ Features-
 
 
 
+## Staff Options
+
+<img src="screenshots/staff options.jpg" width=350 height=650>
+
+
+
+
 ## Patient Details Screen
 
 <img src="screenshots/patient details.jpg" width=350 height=650>
@@ -56,11 +63,6 @@ Features-
 
 <img src="screenshots/staff nav drawer.jpg" width=350 height=650>
 
-
-
-## Staff Options
-
-<img src="screenshots/staff options.jpg" width=350 height=650>
 
 
 
