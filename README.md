@@ -12,22 +12,22 @@ Features-
 
 ## Welcome Screen
 
-<img src="screenshots/intro.jpeg" width=350 height=650>
+<img src="screenshots/intro.jpg" width=350 height=650>
 
 
 ## SignUp Staff Screen
 
-<img src="screenshots/staff SignUp.jpeg" width=350 height=650>
+<img src="screenshots/staff SignUp.jpg" width=350 height=650>
 
 
 ## SignIn Staff Screen
 
-<img src="screenshots/staff signIn.jpeg" width=350 height=650>
+<img src="screenshots/staff signIn.jpg" width=350 height=650>
 
 
 ## Patients list Screen
 
-<img src="screenshots/patients list.jpeg" width=350 height=650>
+<img src="screenshots/patients list.jpg" width=350 height=650>
 
 
 
