@@ -14,6 +14,10 @@ Features-
 
 <img src="screenshots/intro.jpg" width=350 height=650>
 
+## Choose Screen
+<img src="screenshots/staff or non staff.jpg" width=350 height=650>
+
+
 
 ## SignUp Staff Screen
 
@@ -33,53 +37,53 @@ Features-
 
 ## Patient Details Screen
 
-<img src="screenshots/patient details.jpeg" width=350 height=650>
+<img src="screenshots/patient details.jpg" width=350 height=650>
 
 
 
 ## Add Patient Screen
 
-<img src="screenshots/Add a new Patient.jpeg" width=350 height=650>
+<img src="screenshots/Add a new Patient.jpg" width=350 height=650>
 
 
 ## Delete Patient Screen
 
-<img src="screenshots/delete patient.jpeg" width=350 height=650>
+<img src="screenshots/delete patient.jpg" width=350 height=650>
 
 
 
 ## Staff Nav Drawer
 
-<img src="screenshots/staff nav drawer.jpeg" width=350 height=650>
+<img src="screenshots/staff nav drawer.jpg" width=350 height=650>
 
 
 
 ## Staff Options
 
-<img src="screenshots/staff options.jpeg" width=350 height=650>
+<img src="screenshots/staff options.jpg" width=350 height=650>
 
 
 
 ## Doctor SignIn Screen
 
-<img src="screenshots/doctor login.jpeg" width=350 height=650>
+<img src="screenshots/doctor login.jpg" width=350 height=650>
 
 
 
 ## Online Patients List Screen
 
-<img src="screenshots/doctor patients list.jpeg" width=350 height=650>
+<img src="screenshots/doctor patients list.jpg" width=350 height=650>
 
 
 ## Patient SignIn Screen
 
-<img src="screenshots/patient login.jpeg" width=350 height=650>
+<img src="screenshots/patient login.jpg" width=350 height=650>
 
 
 
 ## Doctors List Screen
 
-<img src="screenshots/doctors list.jpeg" width=350 height=650>
+<img src="screenshots/doctors list.jpg" width=350 height=650>
 
 
 
